@@ -1,0 +1,6 @@
+@Collectioneer.API_HostAddress = http://localhost:5115
+
+GET {{Collectioneer.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
