@@ -3,6 +3,7 @@ using Collectioneer.API.Shared.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Collectioneer.API.Social.Domain.Models.Aggregates;
+using NUnit.Framework;
 
 namespace Collectioneer.Testing
 {
@@ -24,19 +25,20 @@ namespace Collectioneer.Testing
         [Test]
         public void Test1()
         {
-            //arrange
+            // arrange
             using var scope = _serviceProvider.CreateScope();
             var scopedServices = scope.ServiceProvider;
-            var manager = scopedServices.GetRequiredService<Community>();
             var dbContext = scopedServices.GetRequiredService<AppDbContext>();
 
-            //act
+            // act
             var createdItem = new Community("test", "desc");
+            dbContext.Communities.Add(createdItem);
+            dbContext.SaveChanges();
 
-            //assert
+            // assert
             var addedItem = dbContext.Communities.Find(createdItem.Id);
             Assert.IsNotNull(addedItem);
-            Assert.AreEqual(createdItem.Name, addedItem.Name);
+            Assert.That(addedItem.Name, Is.EqualTo(createdItem.Name));
         }
     }
 }

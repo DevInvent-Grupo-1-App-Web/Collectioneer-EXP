@@ -2,6 +2,7 @@
 using Collectioneer.API.Shared.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 
 namespace Collectioneer.Testing
 {
@@ -14,7 +15,6 @@ namespace Collectioneer.Testing
         {
             var serviceProvider = new ServiceCollection()
                 .AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("TestDb"))
-                .AddScoped<Collectible>()
                 .BuildServiceProvider();
             _serviceProvider = serviceProvider;
         }
@@ -25,11 +25,12 @@ namespace Collectioneer.Testing
             //arrange
             using var scope = _serviceProvider.CreateScope();
             var scopedServices = scope.ServiceProvider;
-            var manager = scopedServices.GetRequiredService<Collectible>();
             var dbContext = scopedServices.GetRequiredService<AppDbContext>();
 
             //act
-            var createdItem = new Collectible(1, "name", "desc", 1, (float) 0.5);
+            var createdItem = new Collectible(1, "name", "desc", 1, (float)0.5);
+            dbContext.Collectibles.Add(createdItem);
+            dbContext.SaveChanges();
 
             //assert
             var addedItem = dbContext.Collectibles.Find(createdItem.Id);

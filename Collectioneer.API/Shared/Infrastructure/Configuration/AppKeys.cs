@@ -9,7 +9,7 @@ namespace Collectioneer.API.Shared.Infrastructure.Configuration
 		public Persistence Persistence { get; set; }
 		public ExternalCommunication ExternalCommunication { get; set; }
 
-		public AppKeys(IConfiguration configuration, ILogger<AppKeys> logger)
+		public AppKeys(string? v, IConfiguration configuration, ILogger<AppKeys> logger)
 		{
 			_logger = logger;
 
