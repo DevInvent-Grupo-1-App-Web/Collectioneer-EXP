@@ -28,5 +28,9 @@
   <ItemGroup>
     <Folder Include="Scripts\" />
   </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="Collectioneer.Testing" />
+	</ItemGroup>
+
 
 </Project>

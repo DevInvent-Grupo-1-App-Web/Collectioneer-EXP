@@ -1,6 +1,7 @@
 using System.Collections;
 using Collectioneer.API.Operational.Domain.Models.Entities;
 using Collectioneer.API.Shared.Domain.Repositories;
+using Collectioneer.API.Shared.Infrastructure.Repositories;
 using Collectioneer.API.Social.Application.External;
 using Collectioneer.API.Social.Domain.Models.Aggregates;
 using Collectioneer.API.Social.Domain.Models.ValueObjects;
@@ -68,19 +69,19 @@ namespace Collectioneer.API.Social.Application.Internal.Services
 			await commentRepository.Add(comment);
 			await unitOfWork.CompleteAsync();
 		}
+        internal async Task<CommentDTO> MapCommentToDTO(Comment comment)
+        {
+            var user = await userRepository.GetById(comment.AuthorId);
+            var mediaElements = await mediaElementRepository.GetAll();
+            var profileMedia = mediaElements.FirstOrDefault(me => me.UploaderId == user.Id);
 
-		private async Task<CommentDTO> MapCommentToDTO(Comment comment)
-		{
-			var author = await userRepository.GetById(comment.AuthorId);
-			var mediaElement = mediaElementRepository.GetAll().Result.Where(m => m.UploaderId == comment.AuthorId && m.ProfileId is not null).FirstOrDefault();
-
-			return new CommentDTO(
-				comment.Id,
-				comment.AuthorId,
-				author is null ? "Anonymous" : author.Username,
-				comment.Content,
-				mediaElement is null ? "" : mediaElement.MediaURL
-			);
-		}
-	}
+            return new CommentDTO(
+                comment.Id,
+                user.Id,
+                user.Username,
+                comment.Content,
+                profileMedia?.MediaURL ?? string.Empty
+            );
+        }
+    }
 }
